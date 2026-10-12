@@ -219,7 +219,7 @@ jobs:
         with:
           tag_name: mystic-\${{ github.run_number }}-\${{ steps.pack.outputs.timestamp }}
           name: Mystic Kernel #\${{ github.run_number }} (\${{ steps.pack.outputs.timestamp }})
-          body: |
+        body: |
             ### Detail Kompilasi Kernel:
             * **Defconfig yang dipakai**: `${{ github.event.inputs.defconfig }}`
             * **Mode Optimasi LTO**: `${{ github.event.inputs.lto }}`
@@ -236,7 +236,11 @@ jobs:
             release/Image.gz
           fail_on_unmatched_files: false
 
-      - name: 🛡️ Mengunggah Dokumen Log Kompilasi (Artifact)
+      - name: 📑 Mengunggah Dokumen Log Kompilasi (Artifact)
         if: always()
         uses: actions/upload-artifact@v4
         with:
+          name: build-log-\${{ github.run_number }}
+          path: build.log
+          if-no-files-found: warn
+          retention-days: 7
