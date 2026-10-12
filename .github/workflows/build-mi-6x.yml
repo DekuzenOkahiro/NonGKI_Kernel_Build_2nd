@@ -182,7 +182,7 @@ jobs:
           echo "=== Pemeriksaan Akhir Log Kompilasi ==="
           tail -n 100 build.log || true
 
-      - name: 🔩 Pengepakan Arsip Flashable Zip (AnyKernel3 Mi 6X)
+        - name: 🔩 Pengepakan Arsip Flashable Zip (AnyKernel3 Mi 6X)
         id: pack
         if: success()
         run: |
@@ -194,7 +194,7 @@ jobs:
           git clone --depth=1 https://github.com anykernel
 
           if [ -f "\$BOOT/Image.gz-dtb" ]; then
-            cp "$BOOT/Image.gz-dtb" anykernel/
+            cp "\$BOOT/Image.gz-dtb" anykernel/
           elif [ -f "\$BOOT/Image.gz" ]; then
             echo "[!] Berkas Image.gz-dtb tidak ditemukan, menggunakan Image.gz"
             cp "\$BOOT/Image.gz" anykernel/
@@ -205,20 +205,20 @@ jobs:
           cd ..
 
           mkdir -p release
-          [ -f "\$BOOT/Image.gz-dtb" ] && cp "\$BOOT/Image.gz-dtb" release/ || true
-          [ -f "\$BOOT/Image" ]        && cp "\$BOOT/Image"        release/ || true
-          [ -f "\$BOOT/Image.gz" ]     && cp "\$BOOT/Image.gz"     release/ || true
+          [ -f "\(BOOT/Image.gz-dtb" ] && cp "\)BOOT/Image.gz-dtb" release/ || true
+          [ -f "\(BOOT/Image" ]        && cp "\)BOOT/Image"        release/ || true
+          [ -f "\(BOOT/Image.gz" ]     && cp "\)BOOT/Image.gz"     release/ || true
 
-          echo "zipname=\$ZIPNAME" >> "\$GITHUB_OUTPUT"
-          echo "timestamp=\$TIMESTAMP" >> "\$GITHUB_OUTPUT"
+          echo "zipname=ZIPNAME" >> GITHUB_OUTPUT
+          echo "timestamp=TIMESTAMP" >> GITHUB_OUTPUT
           ls -la "\$ZIPNAME" release/
 
       - name: 🚀 Menerbitkan Rilis Resmi ke GitHub Release
         if: success()
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: mystic-\${{ github.run_number }}-\${{ steps.pack.outputs.timestamp }}
-          name: Mystic Kernel #\${{ github.run_number }} (\${{ steps.pack.outputs.timestamp }})
+          tag_name: mystic-\({{ github.run_number }}-\){{ steps.pack.outputs.timestamp }}
+          name: Mystic Kernel #\({{ github.run_number }} (\){{ steps.pack.outputs.timestamp }})
           body: |
             ### Detail Kompilasi Kernel:
             * **Defconfig yang dipakai**: `${{ github.event.inputs.defconfig }}`
@@ -236,7 +236,7 @@ jobs:
             release/Image.gz
           fail_on_unmatched_files: false
 
-      - name: 📑 Mengunggah Dokumen Log Kompilasi (Artifact)
+      - name: 🛡️ Mengunggah Dokumen Log Kompilasi (Artifact)
         if: always()
         uses: actions/upload-artifact@v4
         with:
